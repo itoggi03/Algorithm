@@ -1,69 +1,71 @@
 from collections import deque
 
-def check(x, y):
-    if x >= 0 and x < n*h and y >= 0 and y < m:
+def check(i, j, k):
+    if i >= 0 and i < h and j >= 0 and j < n and k >= 0 and k < m:
         return True
     else:
         return False
 
-def bfs(i, j, cnt):
-    q = deque()
-    q.append((i, j, cnt))
-    visited[i][j] = 1
 
-    while q:
-        x, y, c = q.popleft()
-        for d in range(6):
-            newX = x + dr[d]
-            newY = y + dc[d]
-            if check(newX, newY) and visited[newX][newY] == 0 and tomato[newX][newY] == 0:
-                visited[newX][newY] = 1
-                q.append((newX, newY, c+1))
+def bfs(queue):
+    days = -1
+    tmp = []
 
-    return c
+    while queue:
+        # 시작점들을 for문으로 돌리고 각각 6방향으로 확인
+        for q in queue:
+            f, r, c = q
+            for d in range(6):
+                newF = f + df[d]
+                newR = r + dr[d]
+                newC = c + dc[d]
+
+                if check(newF, newR, newC) and tomato[newF][newR][newC] == 0:
+                    tomato[newF][newR][newC] = 1
+                    tmp.append((newF, newR, newC))
+
+        # 하루가 지난 후 이므로 days +1
+        days += 1
+        queue = tmp     # queue 업데이트
+        tmp = []        # tmp 초기화
+    return days
 
 
-def print_answer():
-    for i in range(n * h):
-        for j in range(m):
-            if tomato[i][j] == 0 and visited[i][j] == 0:
-                return -1
-    return 1
-
-
+# bfs를 돌리고 토마토가 다 익었는지 확인하는 함수
 def check_tomato():
-    for i in range(n * h):
-        for j in range(m):
-            if tomato[i][j] == 0:
-                return 1
-    return 0
+    ans = 0
+    queue = deque()
+    for i in range(h):
+        for j in range(n):
+            for k in range(m):
+                if tomato[i][j][k] == 1:
+                    queue.append((i, j, k))
+
+    ans = bfs(queue)
+
+    # bfs를 다 돌렸는데 다 익지 않았을 경우 토마토가 하나라도 0
+    for i in range(h):
+        for j in range(n):
+            for k in range(m):
+                if not tomato[i][j][k]:
+                    return -1
+
+    return ans
 
 
 m, n, h = map(int, input().split())
 
-tomato = [list(map(int, input().split())) for _ in range(n*h)]
+tomato = [[] for _ in range(h)]
+for i in range(h):
+    for j in range(n):
+        tmp = list(map(int, input().split()))
+        tomato[i].append(tmp)
 
 # 상/하/좌/우/앞/뒤
-dr = [-1, 1, 0, 0, n, -n]
+df = [0, 0, 0, 0, -1, 1]
+dr = [-1, 1, 0, 0, 0, 0]
 dc = [0, 0, -1, 1, 0, 0]
 
-visited = [[0] * m for _ in range(n*h)]
+result = check_tomato()
 
-check_tomato_result = check_tomato()
-if check_tomato_result == 1:
-    ans = 0
-    for i in range(n*h):
-        for j in range(m):
-            if not visited[i][j] and tomato[i][j] == 1:
-                ans = bfs(i, j, 0)
-    tmp = print_answer()
-
-    if tmp == -1:
-        print(-1)
-    else:
-        if ans:
-            print(ans)
-        else:
-            print(-1)
-else:
-    print(0)
+print(result)
