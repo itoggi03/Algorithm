@@ -19,7 +19,7 @@ def bfs(start, cnt):
         if p == g:
             ans = c
             return
-        
+
         c += 1  # 버튼 누른 횟수 +1
 
         # 인덱스가 넘어가지 않고 방문한 적이 없는 층이라면
