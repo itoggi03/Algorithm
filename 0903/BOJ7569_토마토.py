@@ -9,7 +9,7 @@ def check(H, R, C):
 
 def bfs(q):
   days = -1
-  day = []
+  dayQ = []
   
   while q:
     for t in q:
@@ -18,10 +18,10 @@ def bfs(q):
         newH, newR, newC = H + dh[d], R + dr[d], C + dc[d]
         if check(newH, newR, newC) and arr[newH][newR][newC] == 0:
           arr[newH][newR][newC] = 1
-          day.append([newH, newR, newC])
+          dayQ.append([newH, newR, newC])
     days += 1
-    q = day
-    day = []
+    q = dayQ
+    dayQ = []
 
 
   # 토마토가 모두 익지는 못하는 상황 체크
